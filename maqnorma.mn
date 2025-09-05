@@ -43,35 +43,57 @@ test lt(A,B,C,D) {
   limpar: do clear(C) goto true
 }
 
-operation multiplica(A,B,C,D) {
-  1: do load(C,A) goto 2
-  2: if zero C then goto 0 else goto 3
-  3: do soma(A,B,D) goto 4
-  4: do dec C goto 1
+test le(A,B,C,D,E) {
+  1: do load(C,A,E) goto 2
+  2: do load(D,B,E) goto 3
+
+  3: if zero C then goto fim_true else goto 4
+  4: if zero D then goto fim_false else goto 5
+  5: do dec C goto 6
+  6: do dec D goto 3
+
+  fim_true: do clear(D) goto true
+  fim_false: do clear(C) goto false
+}
+
+operation multiplica(A,B,C,D,E) {
+  caso_zero: if zero B then goto caso_zero_1 else goto 1
+  caso_zero_1: do clear(A) goto 0
+
+  // load(C,A)
+  1: do soma(C,A) goto 2
+  2: do load(D,B,E) goto loop
+
+  loop: if zero D then goto fim else goto loop_1
+  loop_1: do soma(A,C,E) goto loop_2
+  loop_2: do dec D goto loop
+
+  fim: do clear(C) goto 0
+}
+
+operation mod(A,B,C,D,E) {
+  1: if zero B then goto 2 else goto loop
+  2: do clear(A) goto 0
+  loop: if le(B,A,C,D,E) then goto loop_1 else goto 0
+  loop_1: do subtrai(A,B,D) goto loop
 }
 
 operation div(A,B,C,D,E) {
   1: if zero B then goto 2 else goto 3
   2: do clear(A) goto 0
-  3: do load(C,A) goto 4
-  4: do clear(A) goto loop
-  loop: if lt(C,B,D,E) then goto loop_1 else goto fim_loop
+  3: do load(C,A) goto loop
+  loop: if le(B,C,D,E) then goto loop_1 else goto fim_loop
   loop_1: do subtrai(C,B,D) goto loop_2
   loop_2: do inc A goto loop
   fim_loop: do clear(C) goto 0
 }
 
 test divBy(A,B,C,D,E,F) {
-  1: if zero B then goto false else goto 2
-  2: if zero A then goto true else goto 3
-  3: do load(C,A,D) goto loop
-  loop: if lt(B,C,D,E) then goto loop_1 else goto fim_loop
-  loop_1: do subtrai(C,B,D) goto loop
-  fim_loop: if lt(C,B,D,E) then goto fim_false else goto fim_true
-  fim_true: do clear(C) goto true
-  fim_false: do clear(C) goto false
+  1: do load(C,A,D) goto 2
+  2: do mod(C,B,D,E,F) goto 3
+  3: if zero C then goto true else goto 4
+  4: do clear(C) goto false
 }
-
 
 test primo(A,B,C,D,E,F,G) {
   1: do load(B,A,D) goto 2
@@ -88,6 +110,6 @@ test primo(A,B,C,D,E,F,G) {
 }
 
 main {
-  1: if primo(X,A,B,C,D,E,F) then goto 2 else goto 0
-  2: do inc Y goto 0
+  1: do add Y 9 goto 2
+  2: do multiplica(Y,X,A,B,C) goto 0
 }
