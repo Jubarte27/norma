@@ -1,7 +1,6 @@
 {
 	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
 	"name": "Norma",
-
 	"foldingStartMarker": "\\{\\s*$",
     "foldingStopMarker": "^\\s*\\}",
 	"patterns": [
@@ -11,13 +10,14 @@
 	],
 	"repository": {
 		"keywords": {
-			"patterns": [{
+			"patterns": [
+			{
 				"name": "keyword.control.mn",
-				"match": "\\b(if|then|else|goto|do|operation|test)\\b"
+				"match": "\\b(if|then|else|goto|do)\\b"
 			},
 			{
 				"name": "keyword.other",
-				"match": "\\b(zero|cmp|add|sub|inc|dec)\\b"
+				"match": "\\b(zero|cmp|add|sub|inc|dec|operation|test|main)\\b"
 			},
 			{
 				"name": "constant.language.mn",
@@ -28,8 +28,30 @@
 				"match": "[a-zA-Z_]+(?=\\s*\\([a-zA-Z_, ]*\\))"
 			},
 			{
-				"name": "variable.other",
+				"name": "comment.line.double-slash.mn",
+				"match": "//[^\n]*"
+			},
+			{
+				"name": "entity.name.tag.mn",
+				"match": "(?<=goto )([0-9a-zA-Z_]+)\\b"
+			},
+			{
+				"name": "entity.name.tag.mn",
 				"match": "\\b[0-9a-zA-Z_]+\\b(?=:)"
+			},
+			{
+				"begin": "\\(",
+				"end": "\\)",
+				"patterns": [
+					{
+						"match": "\\b([0-9a-zA-Z_]+)\\b",
+						"name": "variable.parameter.mn"
+					}
+				]
+			},
+			{
+				"match": "\\b[0-9a-zA-Z_]+\\b",
+				"name": "variable.other.mn"
 			}
 		]
 		}
