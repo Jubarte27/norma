@@ -1,0 +1,25 @@
+{
+  "name": "norma",
+  "displayName": "Norma",
+  "description": "Maquina norma",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.103.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [{
+      "id": "mn",
+      "aliases": ["Norma", "mn"],
+      "extensions": [".mn"],
+      "configuration": "./language-configuration.json"
+    }],
+    "grammars": [{
+      "language": "mn",
+      "scopeName": "source.mn",
+      "path": "./syntaxes/mn.tmLanguage.json"
+    }]
+  }
+}
