@@ -102,10 +102,6 @@ test le_1_(A) {
   3: do inc A goto false
 }
 
-operation arredonda_para_impar(B,C) {
-
-}
-
 test primo(A,B,C,D,E,F,G) {
   1: do load(B,A,D) goto 2
   2: do add C 2 goto 3
@@ -114,13 +110,18 @@ test primo(A,B,C,D,E,F,G) {
 
   loop: if le_1_(B) then goto fim_true else goto loop_1
   loop_1: if divBy(A,B,C,D,E,F) then goto fim_false else goto loop_2
-  loop_2: do sub B 2 goto loop
+  loop_2: do sub B 1 goto loop
 
   fim_true: do clear(B) goto true
   fim_false: do clear(B) goto false
 }
 
-main {
+//1: do trab_c(X,Y,A,B,C,D,E,F) goto 0
+operation trab_1_c(X,Y,A,B,C,D,E,F) {
   1: if primo(X,A,B,C,D,E,F) then goto 2 else goto 0
   2: do inc Y goto 0
+}
+
+main {
+  1: do trab_1_c(X,Y,A,B,C,D,E,F) goto 0
 }
