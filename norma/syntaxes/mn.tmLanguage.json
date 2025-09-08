@@ -25,7 +25,7 @@
 			},
 			{
 				"name": "entity.name.function.mn",
-				"match": "[a-zA-Z_]+(?=\\s*\\([a-zA-Z_, ]*\\))"
+				"match": "[a-zA-Z_0-9]+(?=\\s*\\([a-zA-Z_, ]*\\))"
 			},
 			{
 				"name": "comment.line.double-slash.mn",

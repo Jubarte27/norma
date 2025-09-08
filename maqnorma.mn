@@ -5,7 +5,7 @@ operation clear(A){
 }
 
 // A += B; B := 0 (soma destrutiva)
-operation soma(A,B) {
+operation soma_(A,B) {
   1: if zero B then goto 0 else goto 2
   2: do dec B goto 3
   3: do inc A goto 1
@@ -33,7 +33,7 @@ operation subtrai(A,B,C) {
   2: do dec B goto 3
   3: do dec A goto 4
   4: do inc C goto 1
-  fim_loop: do soma(B,C) goto 0
+  fim_loop: do soma_(B,C) goto 0
 }
 
 test lt(A,B,C,D) {
@@ -61,7 +61,7 @@ operation multiplica(A,B,C,D,E) {
   caso_zero_1: do clear(A) goto 0
 
   // load(C,A)
-  1: do soma(C,A) goto 2
+  1: do soma_(C,A) goto 2
   2: do load(D,B,E) goto loop
 
   loop: if zero D then goto fim else goto loop_1
@@ -78,11 +78,12 @@ operation mod(A,B,C,D,E) {
   loop_1: do subtrai(A,B,D) goto loop
 }
 
-operation div(A,B,C,D,E) {
+operation div(A,B,C,D,E,F) {
   1: if zero B then goto 2 else goto 3
   2: do clear(A) goto 0
-  3: do load(C,A) goto loop
-  loop: if le(B,C,D,E) then goto loop_1 else goto fim_loop
+  //load(C,A)
+  3: do soma_(C,A) goto loop
+  loop: if le(B,C,D,E,F) then goto loop_1 else goto fim_loop
   loop_1: do subtrai(C,B,D) goto loop_2
   loop_2: do inc A goto loop
   fim_loop: do clear(C) goto 0
@@ -95,21 +96,31 @@ test divBy(A,B,C,D,E,F) {
   4: do clear(C) goto false
 }
 
+test le_1_(A) {
+  1: do dec A goto 2
+  2: if zero A then goto true else goto 3
+  3: do inc A goto false
+}
+
+operation arredonda_para_impar(B,C) {
+
+}
+
 test primo(A,B,C,D,E,F,G) {
   1: do load(B,A,D) goto 2
-  2: do clear(C) goto loop
+  2: do add C 2 goto 3
+  3: do div(B,C,D,E,F,G) goto 4
+  4: do clear(C) goto loop
 
-  loop: if zero B then goto fim_loop else goto loop_1
-  loop_1: if divBy(A,B,D,E,F,G) then goto loop_2 else goto loop_3
-  loop_2: do inc C goto loop_3
-  loop_3: do dec B goto loop
+  loop: if le_1_(B) then goto fim_true else goto loop_1
+  loop_1: if divBy(A,B,C,D,E,F) then goto fim_false else goto loop_2
+  loop_2: do sub B 2 goto loop
 
-  fim_loop: if cmp C 2 then goto fim_true else goto fim_false
-  fim_true: do clear(C) goto true
-  fim_false: do clear(C) goto false
+  fim_true: do clear(B) goto true
+  fim_false: do clear(B) goto false
 }
 
 main {
-  1: do add Y 9 goto 2
-  2: do multiplica(Y,X,A,B,C) goto 0
+  1: if primo(X,A,B,C,D,E,F) then goto 2 else goto 0
+  2: do inc Y goto 0
 }
