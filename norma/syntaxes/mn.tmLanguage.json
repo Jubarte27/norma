@@ -50,8 +50,12 @@
 				]
 			},
 			{
-				"match": "\\b[0-9a-zA-Z_]+\\b",
+				"match": "\\b[a-zA-Z_][0-9a-zA-Z_]*\\b",
 				"name": "variable.other.mn"
+			},
+			{
+				"match": "\\b[0-9]+\\b",
+				"name": "constant.numeric.mn"
 			}
 		]
 		}

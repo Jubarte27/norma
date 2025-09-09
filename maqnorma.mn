@@ -122,6 +122,96 @@ operation trab_1_c(X,Y,A,B,C,D,E,F) {
   2: do inc Y goto 0
 }
 
+//1: do trab_1_d(X,Y,A,B,C,D) goto 0
+operation trab_1_d(X,Y,A,B,C,D) {
+  1: do add A 3 goto 2
+  2: do load(Y,X,B) goto 3
+  3: do mod(Y,A,B,C,D) goto 4
+  4: do clear(A) goto 0
+}
+
+//A=A!
+operation fatorial(A,B,C,D,E) {
+  fat_0: if zero A then goto fat_0_1 else goto 1
+  fat_0_1: do inc A goto 0
+
+  1: do load(B,A,C) goto 2
+
+  2: do dec B goto 3
+  3: if zero B then goto 0 else goto 4
+  4: do multiplica(A,B,C,D,E) goto 2
+}
+
+//A = A*(A-1)*...*(B+1)
+operation multiplica_de_A_a_B(A,B,C,D,E,F,G) {
+  1: do load(C,A,E) goto 2
+  2: do load(D,A,E) goto 3
+
+  3: do subtrai(C,B,E) goto 4
+
+  4: do dec C goto 5
+  5: if zero C then goto fim else goto 6
+  6: do dec D goto 7
+  7: do multiplica(A,D,E,F,G) goto 4
+
+  fim: do clear(D) goto 0
+}
+
+//cheat, muito feio, deselegante, horrível
+operation combinacao_8_elementos(A) {
+//(2n-1): if cmp A n then goto (2n) else goto (2n+1)
+//(2n)  : do add A (combinação(8,n) - n) goto 0
+
+  1: if cmp A 1 then goto 2 else goto 3
+  2: do add A 7 goto 0
+
+  3: if cmp A 2 then goto 4 else goto 5
+  4: do add A 26 goto 0
+
+  5: if cmp A 3 then goto 6 else goto 7
+  6: do add A 53 goto 0
+
+  7: if cmp A 4 then goto 8 else goto 9
+  8: do add A 66 goto 0
+
+  9: if cmp A 5 then goto 10 else goto 11
+  10: do add A 51 goto 0
+
+  11: if cmp A 6 then goto 12 else goto 13
+  12: do add A 22 goto 0
+
+  13: if cmp A 7 then goto 14 else goto 15
+  14: do add A 1 goto 0
+
+  15: do clear(A) goto 16
+  16: do inc A goto 0
+}
+
+//inutil, muitas multiplicações
+operation combinacao(A,B,Y,C,D,E,F,G) {
+  trivial: if zero B then goto only_one else goto trivial_1
+  trivial_1: if le(A,B,C,D,E) then goto only_one else goto 1
+
+  //Y=A*(A-1)*...*(B+1)
+  1: do load(Y,A,E) goto 2
+  2: do multiplica_de_A_a_B(Y,B,C,D,E,F,G) goto 3
+
+  3: do load(C,B,E) goto 4
+  4: do fatorial(C,D,E,F,G) goto 5
+
+  5: do div(Y,C,D,E,F,G) goto 6
+
+  6: do clear(C) goto 0
+
+  only_one: do add Y 1 goto 0
+}
+
+//1: do trab_1_b(X,Y,A,B,C,D,E,F,G) goto 0
+operation trab_1_b(X,Y,A) {
+  1: do load(Y,X,A) goto 2
+  2: do combinacao_8_elementos(Y) goto 0
+}
+
 main {
-  1: do trab_1_c(X,Y,A,B,C,D,E,F) goto 0
+  1: do trab_1_b(X,Y,A) goto 0
 }
