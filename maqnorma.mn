@@ -28,6 +28,11 @@ operation load(A,B,C){
   2: do soma(A,B,C) goto 0
 }
 
+operation load_(A,B) {
+  1: do clear(A) goto 2
+  2: do soma_(A,B) goto 0
+}
+
 operation subtrai(A,B,C) {
   1: if zero B then goto fim_loop else goto 2
   2: do dec B goto 3
@@ -87,6 +92,134 @@ operation div(A,B,C,D,E,F) {
   loop_1: do subtrai(C,B,D) goto loop_2
   loop_2: do inc A goto loop
   fim_loop: do clear(C) goto 0
+}
+
+operation div_ceil(A,B,C,D) {
+  1: if zero B then goto 2 else goto 3
+  2: do clear(A) goto 0
+  //load(C,A), se C for zero
+  3: do soma_(C,A) goto loop
+  loop: if zero C then goto 0 else goto loop_1
+  loop_1: do subtrai(C,B,D) goto loop_2
+  loop_2: do inc A goto loop
+}
+
+operation div_2_ceil(A,B) {
+  //load_(B,A), se B for zero
+  1: do soma_(B,A) goto loop
+  loop: if zero B then goto 0 else goto loop_1
+  loop_1: do sub B 2 goto loop_2
+  loop_2: do inc A goto loop
+}
+
+operation div_2(A,B,Rem) {
+  pre_loop: do soma_(B,A) goto loop
+
+  loop: if zero B then goto 0 else goto loop_1
+  loop_1: do sub B 1 goto loop_2
+  loop_2: if zero B then goto resto else goto loop_3
+  loop_3: do add B 1 goto loop_4
+
+  loop_4: do sub B 2 goto loop_5
+  loop_5: do inc A goto loop
+
+  resto: do inc Rem goto 0
+}
+
+operation mult_2(A,B) {
+  //load_(B,A), se B for zero
+  1: do soma_(B,A) goto loop
+  loop: if zero B then goto 0 else goto loop_1
+  loop_1: do inc B goto loop_2
+  loop_2: do add A 2 goto loop
+}
+
+//A=A*(2**1)=A*2
+operation times_two(A,B) {
+  1: do soma_(B,A) goto 2
+  2: if zero B then goto 0 else goto 3
+  3: do dec B goto 4
+  4: do add A 2 goto 2
+}
+
+//A=A*(2**2)=A*4
+operation times_two_squared(A,B) {
+  1: do soma_(B,A) goto 2
+  2: if zero B then goto 0 else goto 3
+  3: do dec B goto 4
+  4: do add A 4 goto 2
+}
+
+//A=A*(2**4)=A*16
+operation times_two_fourth(A,B) {
+  1: do soma_(B,A) goto 2
+  2: if zero B then goto 0 else goto 3
+  3: do dec B goto 4
+  4: do add A 16 goto 2
+}
+
+//A=A*(2**8)=A*256
+operation times_two_eigth(A,B) {
+  1: do soma_(B,A) goto 2
+  2: if zero B then goto 0 else goto 3
+  3: do dec B goto 4
+  4: do add A 256 goto 2
+}
+
+operation two_raised(A,B,C) {
+  //load_(B,A), se B for zero
+  1: do soma_(B,A) goto 2
+  2: do inc A goto 3
+  3: if zero B then goto 0 else goto 4
+  4: do twice(A,C) goto 5
+  5: do dec B goto 3
+}
+
+operation four_raised(A,B,C) {
+  //load_(B,A), se B for zero
+  1: do soma_(B,A) goto 2
+  2: do inc A goto 3
+  3: if zero B then goto 0 else goto 4
+  4: do times_four(A,C) goto 5
+  5: do dec B goto 3
+}
+
+operation y_times_two_eighth_raised(A,B,Y) {
+  2: if zero A then goto 0 else goto 3
+  3: do times_two_eigth(Y,B) goto 4
+  4: do dec A goto 2
+}
+
+operation fast_two_raised(A,B,C,D,Y) {
+  pre: do inc Y goto 1
+  1: do load(B,A,C) goto two
+
+  two: do div_2(B,C,D) goto two_1
+  two_1: if zero D then goto after_two else goto two_2
+  two_2: do times_two(Y,C) goto two_3
+  two_3: do clear(D) goto after_two
+  after_two: if zero B then goto fim else goto two_sqared
+
+  two_sqared: do div_2(B,C,D) goto two_sqared_1
+  two_sqared_1: if zero D then goto after_two_squared else goto two_sqared_2
+  two_sqared_2: do times_two_squared(Y,C) goto two_sqared_3
+  two_sqared_3: do clear(D) goto after_two_squared
+  after_two_squared: if zero B then goto fim else goto two_fourth
+
+  two_fourth: do div_2(B,C,D) goto two_fourth_1
+  two_fourth_1: if zero D then goto after_two_fourth else goto two_fourth_2
+  two_fourth_2: do times_two_fourth(Y,C) goto two_fourth_3
+  two_fourth_3: do clear(D) goto after_two_fourth
+  after_two_fourth: if zero B then goto fim else goto two_eighth
+
+  two_eighth: do y_times_two_eighth_raised(B,C,Y) goto fim
+}
+
+operation two_raised_x_div_2_ceil(A,Y,B) {
+  1: do clear(Y) goto 2
+  2: do load(B,A,Y) goto loop
+  loop: if zero B then goto 0 else goto loop_1
+  loop_1: do sub B 2 goto loop
 }
 
 test divBy(A,B,C,D,E,F) {
@@ -206,12 +339,12 @@ operation combinacao(A,B,Y,C,D,E,F,G) {
   only_one: do add Y 1 goto 0
 }
 
-//1: do trab_1_b(X,Y,A,B,C,D,E,F,G) goto 0
+//1: do trab_1_b(X,Y,A) goto 0
 operation trab_1_b(X,Y,A) {
   1: do load(Y,X,A) goto 2
   2: do combinacao_8_elementos(Y) goto 0
 }
 
 main {
-  1: do trab_1_b(X,Y,A) goto 0
+  1: do fast_two_raised(X,A,B,C,Y) goto 0
 }
