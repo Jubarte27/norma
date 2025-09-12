@@ -1,0 +1,70 @@
+//is_odd
+${idx + 2}: if cmp A ${idx*2 + 9} then goto true else goto ${idx+3}
+
+
+
+${(
+    () => {
+        const n = 2**(idx+1);
+        const regex = /   (?=[0-9a-zA-Z_]+:)/g;
+        const regex2 = / *operation/g;
+
+        return `
+operation div_${n}(A,B,Rem) {
+  pre_loop: do load2_(B,Rem,A) goto loop
+
+  loop: if zero B then goto 0 else goto loop_1
+  loop_1: do sub B ${n - 1} goto loop_2
+
+  loop_2: if zero B then goto 0 else goto loop_3
+  loop_3: do sub B 1 goto loop_4
+  loop_4: do sub Rem ${n - 1} goto loop_5
+  loop_5: do inc A goto loop
+}
+`
+.replaceAll(regex, '\n  ')
+.replaceAll(regex2, 'operation')
+    }
+)()}
+
+operation div_2(A,B,Rem) {
+  pre_loop: do load2_(B,Rem,A) goto loop 
+  loop: if zero B then goto 0 else goto loop_1
+  loop_1: do sub B 1 goto loop_2 
+  loop_2: if zero B then goto 0 else goto loop_3
+  loop_3: do sub B 1 goto loop_4
+  loop_4: do sub Rem 1 goto loop_5
+  loop_5: do inc A goto loop } 
+operation div_4(A,B,Rem) {
+  pre_loop: do load2_(B,Rem,A) goto loop 
+  loop: if zero B then goto 0 else goto loop_1
+  loop_1: do sub B 3 goto loop_2 
+  loop_2: if zero B then goto 0 else goto loop_3
+  loop_3: do sub B 1 goto loop_4
+  loop_4: do sub Rem 3 goto loop_5
+  loop_5: do inc A goto loop } 
+operation div_8(A,B,Rem) {
+  pre_loop: do load2_(B,Rem,A) goto loop 
+  loop: if zero B then goto 0 else goto loop_1
+  loop_1: do sub B 7 goto loop_2 
+  loop_2: if zero B then goto 0 else goto loop_3
+  loop_3: do sub B 1 goto loop_4
+  loop_4: do sub Rem 7 goto loop_5
+  loop_5: do inc A goto loop } 
+operation div_16(A,B,Rem) {
+  pre_loop: do load2_(B,Rem,A) goto loop 
+  loop: if zero B then goto 0 else goto loop_1
+  loop_1: do sub B 15 goto loop_2 
+  loop_2: if zero B then goto 0 else goto loop_3
+  loop_3: do sub B 1 goto loop_4
+  loop_4: do sub Rem 15 goto loop_5
+  loop_5: do inc A goto loop } 
+operation div_32(A,B,Rem) {
+  pre_loop: do load2_(B,Rem,A) goto loop 
+  loop: if zero B then goto 0 else goto loop_1
+  loop_1: do sub B 31 goto loop_2 
+  loop_2: if zero B then goto 0 else goto loop_3
+  loop_3: do sub B 1 goto loop_4
+  loop_4: do sub Rem 31 goto loop_5
+  loop_5: do inc A goto loop } 
+

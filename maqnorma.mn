@@ -33,6 +33,13 @@ operation load_(A,B) {
   2: do soma_(A,B) goto 0
 }
 
+operation load2_(A,B,C) {
+  1: if zero C then goto 0 else goto 2
+  2: do dec C goto 3
+  3: do inc A goto 4
+  4: do inc B goto 1
+}
+
 operation subtrai(A,B,C) {
   1: if zero B then goto fim_loop else goto 2
   2: do dec B goto 3
@@ -113,17 +120,15 @@ operation div_2_ceil(A,B) {
 }
 
 operation div_2(A,B,Rem) {
-  pre_loop: do soma_(B,A) goto loop
+  pre_loop: do load2_(B,Rem,A) goto loop
 
   loop: if zero B then goto 0 else goto loop_1
   loop_1: do sub B 1 goto loop_2
-  loop_2: if zero B then goto resto else goto loop_3
-  loop_3: do add B 1 goto loop_4
 
-  loop_4: do sub B 2 goto loop_5
+  loop_2: if zero B then goto 0 else goto loop_3
+  loop_3: do sub B 1 goto loop_4
+  loop_4: do sub Rem 2 goto loop_5
   loop_5: do inc A goto loop
-
-  resto: do inc Rem goto 0
 }
 
 operation mult_2(A,B) {
@@ -180,9 +185,42 @@ operation y_times_2_2_4(A,B,Y) {
   4: do dec A goto 2
 }
 
-operation fast_two_raised(A,B,C,D,Y) {
-  pre: do inc Y goto pre_1
-  pre_1: do load(B,A,C) goto 2_0
+test is_odd_lt2(A) {
+  1: if cmp A 1 then goto true else goto false
+}
+
+test is_odd_lt4(A) {
+  1: if is_odd_lt2(A) then goto true else goto 2
+  2: if cmp A 3 then goto true else goto false
+}
+
+test is_odd_lt8(A) {
+  1: if is_odd_lt4(A) then goto true else goto 2
+  2: if cmp A 5 then goto true else goto 3
+  3: if cmp A 7 then goto true else goto false
+}
+
+test is_odd_lt16(A) {
+  1: if is_odd_lt8(A) then goto true else goto 2
+  2: if cmp A 9 then goto true else goto 3
+  3: if cmp A 11 then goto true else goto 4
+  4: if cmp A 13 then goto true else goto 5
+  5: if cmp A 15 then goto true else goto false
+}
+test is_odd_lt32(A) {
+  1: if is_odd_lt16(A) then goto true else goto 2
+  2: if cmp A 17 then goto true else goto 3
+  3: if cmp A 19 then goto true else goto 4
+  4: if cmp A 21 then goto true else goto 5
+  5: if cmp A 23 then goto true else goto 6
+  6: if cmp A 25 then goto true else goto 7
+  7: if cmp A 27 then goto true else goto 8
+  8: if cmp A 29 then goto true else goto 9
+  9: if cmp A 31 then goto true else goto false
+}
+
+operation times_fast_two_raised(A,B,C,D,Y) {
+  pre: do load(B,A,C) goto 2_0
 
   2_0: do div_2(B,C,D) goto 2_0_1
   2_0_1: if zero D then goto after_2_0 else goto 2_0_2
@@ -211,11 +249,74 @@ operation fast_two_raised(A,B,C,D,Y) {
   2_4: do y_times_2_2_4(B,C,Y) goto fim
 }
 
+operation fast_two_raised(A,B,C,D,Y) {
+  1: do inc Y goto 2
+  2: do times_fast_two_raised(A,B,C,D,Y) goto 0
+}
+
 operation two_raised_x_div_2_ceil(A,Y,B,C,D,E) {
   1: do clear(Y) goto 2
   2: do load(B,A,Y) goto 3
   3: do div_2_ceil(B,Y) goto 4
   4: do fast_two_raised(B,C,D,E,Y) goto 0
+}
+
+operation div_4(A,B,Rem) {
+  pre_loop: do load2_(B,Rem,A) goto loop
+
+  loop: if zero B then goto 0 else goto loop_1
+  loop_1: do sub B 3 goto loop_2
+
+  loop_2: if zero B then goto 0 else goto loop_3
+  loop_3: do sub B 1 goto loop_4
+  loop_4: do sub Rem 4 goto loop_5
+  loop_5: do inc A goto loop
+}
+
+operation div_8(A,B,Rem) {
+  pre_loop: do load2_(B,Rem,A) goto loop
+
+  loop: if zero B then goto 0 else goto loop_1
+  loop_1: do sub B 7 goto loop_2
+
+  loop_2: if zero B then goto 0 else goto loop_3
+  loop_3: do sub B 1 goto loop_4
+  loop_4: do sub Rem 8 goto loop_5
+  loop_5: do inc A goto loop
+}
+
+operation div_16(A,B,Rem) {
+  pre_loop: do load2_(B,Rem,A) goto loop
+
+  loop: if zero B then goto 0 else goto loop_1
+  loop_1: do sub B 15 goto loop_2
+
+  loop_2: if zero B then goto 0 else goto loop_3
+  loop_3: do sub B 1 goto loop_4
+  loop_4: do sub Rem 16 goto loop_5
+  loop_5: do inc A goto loop
+}
+
+operation div_32(A,B,Rem) {
+  pre_loop: do load2_(B,Rem,A) goto loop
+
+  loop: if zero B then goto 0 else goto loop_1
+  loop_1: do sub B 31 goto loop_2
+
+  loop_2: if zero B then goto 0 else goto loop_3
+  loop_3: do sub B 1 goto loop_4
+  loop_4: do sub Rem 32 goto loop_5
+  loop_5: do inc A goto loop
+}
+
+operation fast_div_two_raised(A,B,C,Y) {
+    2: if zero A then goto fim else goto 2_1
+  2_1: do div_2(A,B,C) goto 2_2
+  2_2: if zero C then goto 2_3 else goto fim
+  2_3: do inc Y goto 2
+
+  fim: do times_2_2_0(A,B) goto fim_1
+  fim_1: do soma_(A,C) goto 0
 }
 
 test divBy(A,B,C,D,E,F) {
@@ -346,18 +447,25 @@ operation trab_1_d(X,Y,A,B,C,D) {
   4: do clear(A) goto 0
 }
 
-operation codifica(A,B,C,A_,B_,D,E,F) {
-  1: do load(A_,A,D) goto 2
-  2: do load(B_,B,D) goto 3
+operation codifica(A,B,C,D,E,F) {
+  1: do load(C,B,D) goto 2
 
-  3: do mult_2(B_,D) goto 4
-  4: do inc B_ goto 5
+  2: do mult_2(C,D) goto 3
+  3: do inc C goto 4
 
-  5: do fast_two_raised(A_,D,E,F,C) goto 6
-  6: do multiplica(C,B_,D,E,F) goto 0
+  4: do times_fast_two_raised(A,D,E,F,C) goto 0
+}
+
+operation decodifica(A,B,C,D,E,F) {
+  1: do fast_div_two_raised(C,D,E,A) goto 2
+
+  2: do div_2(C,D,E) goto 3 
+
+  3: do load_(B,C) goto 4
+
+  4: do codifica(A,B,C,D,E,F) goto 0
 }
 
 main {
-  1: do add MM 3 goto 2
-  2: do codifica(MM,X,Y,B,C,D,E,F) goto 0
+  5: do decodifica(A,B,X,D,E,F) goto 0
 }
